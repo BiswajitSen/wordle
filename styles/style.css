@@ -72,3 +72,7 @@
   margin-top: 5vh;
   font-size: 1.5em;
 }
+
+.guess-holder {
+  text-transform: uppercase;
+}

@@ -1,18 +1,20 @@
 class Wordle {
   #secretWord;
   #guessesRecord;
-  #isGameOver;
-  #currentGuess;
   #chances;
+  #currentGuess;
   #timesGuessed;
+  #score;
+  #isGameOver;
 
   constructor(word, chances = 1) {
-    this.#secretWord = word;
+    this.#secretWord = word.toUpperCase();
     this.#guessesRecord = [];
-    this.#currentGuess = null;
-    this.#isGameOver = false;
     this.#chances = chances;
+    this.#currentGuess = null;
     this.#timesGuessed = 0;
+    this.#isGameOver = false;
+    this.#score = 0;
   }
 
   get secretWord() {
@@ -23,6 +25,10 @@ class Wordle {
     return this.#isGameOver;
   }
 
+  secretWordLength() {
+    return this.#secretWord.length;
+  }
+
   hasGuessedCorrectly() {
     return this.#currentGuess === this.#secretWord;
   }
@@ -31,7 +37,7 @@ class Wordle {
     return this.#timesGuessed >= this.#chances;
   }
 
-  validateLettersPositions(guessedWord) {
+  validateAndRecordGuess(guessedWord) {
     const originalLetters = this.#secretWord.split('');
     const guessedLetters = guessedWord.split('');
 
@@ -55,21 +61,24 @@ class Wordle {
     });
   }
 
+  #updateScore() {
+    if (this.hasGuessedCorrectly()) {
+      this.#score = (this.#chances - this.#timesGuessed + 1) * 10;
+    }
+  }
+
   #add(guessedWord) {
     this.#currentGuess = guessedWord;
-    const lettersStats = this.validateLettersPositions(guessedWord);
-    const correctGuesses = lettersStats.reduce(
-      (totalMatched, letter) => totalMatched + (letter.isPresent ? 1 : 0),
-      0
-    );
+    const lettersStats = this.validateAndRecordGuess(guessedWord);
 
-    this.#guessesRecord.push({ lettersStats, correctGuesses });
+    this.#guessesRecord.push({ lettersStats });
   }
 
   register(guessedWord) {
     this.#add(guessedWord);
     this.#timesGuessed++;
     this.#isGameOver = this.hasGuessedCorrectly() || this.#outOfChances();
+    this.#updateScore();
   }
 
   stats() {
@@ -77,6 +86,7 @@ class Wordle {
       guessesRecord: [...this.#guessesRecord],
       chances: this.#chances,
       timesGuessed: this.#timesGuessed,
+      score: this.#score,
     };
   }
 }
@@ -94,17 +104,19 @@ class MouseController {
     this.#submitBtn.onclick = () => {
       const word = this.#guessedInputContainer.value;
       cb(word);
+      this.#guessedInputContainer.focus();
     };
   }
 }
 
-class Renderer {
+class WordleRenderer {
   #resultContainer;
   #guessedWordsContainer;
   #guessedInputContainer;
   #chancesContainer;
   #remainingAttemptsContainer;
   #correctWordHolder;
+  #gameStatsContainer;
 
   constructor(
     resultContainer,
@@ -112,7 +124,8 @@ class Renderer {
     guessedInputContainer,
     chancesContainer,
     remainingAttemptsContainer,
-    correctWordHolder
+    correctWordHolder,
+    gameStatsContainer
   ) {
     this.#resultContainer = resultContainer;
     this.#guessedWordsContainer = guessedWordsContainer;
@@ -120,6 +133,7 @@ class Renderer {
     this.#chancesContainer = chancesContainer;
     this.#remainingAttemptsContainer = remainingAttemptsContainer;
     this.#correctWordHolder = correctWordHolder;
+    this.#gameStatsContainer = gameStatsContainer;
   }
 
   displayLostMessage() {
@@ -171,6 +185,12 @@ class Renderer {
     this.#correctWordHolder.innerText = `correct word: ${word}`;
   }
 
+  renderScore({ score }) {
+    const scoreContainer = document.createElement('div');
+    scoreContainer.innerText = `Score: ${score}`;
+    this.#gameStatsContainer.appendChild(scoreContainer);
+  }
+
   #renderAttemptsAndChances(chances, timesGuessed) {
     this.#chancesContainer.innerText = `chances: ${chances}`;
     const remainingChances = chances - timesGuessed;
@@ -188,11 +208,7 @@ class Renderer {
       const correctGuesses = record.correctGuesses;
 
       const word = record.lettersStats.map(this.#addColorNotation);
-      const hint = document.createElement('div');
-      hint.innerText = `correctGuesses: ${correctGuesses}`;
-
       wordHolder.append(...word);
-      wordHolder.appendChild(hint);
 
       this.#guessedWordsContainer.appendChild(wordHolder);
     });
@@ -202,39 +218,47 @@ class Renderer {
 class WordleController {
   #wordle;
   #inputController;
-  #renderer;
+  #wordleRenderer;
 
-  constructor(wordle, inputController, renderer) {
+  constructor(wordle, inputController, wordleRenderer) {
     this.#wordle = wordle;
     this.#inputController = inputController;
-    this.#renderer = renderer;
+    this.#wordleRenderer = wordleRenderer;
   }
 
   #updateAndRenderGameState(guessedWord) {
-    this.#renderer.resetGuessInputBox();
+    this.#wordleRenderer.resetGuessInputBox();
     this.#wordle.register(guessedWord);
 
-    this.#renderer.renderGameState(this.#wordle.stats());
+    this.#wordleRenderer.renderGameState(this.#wordle.stats());
+  }
+
+  #isInvalidEntry(guessedWord) {
+    return this.#wordle.secretWordLength() !== guessedWord.length;
   }
 
   #consolidateGameStats(guessedWord) {
+    if (this.#isInvalidEntry(guessedWord)) return;
+
     if (this.#wordle.isGameOver) return;
 
-    this.#updateAndRenderGameState(guessedWord);
+    this.#updateAndRenderGameState(guessedWord.toUpperCase());
 
     if (this.#wordle.hasGuessedCorrectly()) {
-      this.#renderer.displayWinMessage();
+      this.#wordleRenderer.displayWinMessage();
+      this.#wordleRenderer.renderScore(this.#wordle.stats());
       return;
     }
 
     if (this.#wordle.isGameOver) {
-      this.#renderer.displayLostMessage();
-      this.#renderer.renderCorrectWord(this.#wordle.secretWord);
+      this.#wordleRenderer.displayLostMessage();
+      this.#wordleRenderer.renderCorrectWord(this.#wordle.secretWord);
+      this.#wordleRenderer.renderScore(this.#wordle.stats());
     }
   }
 
   start() {
-    this.#renderer.renderGameState(this.#wordle.stats());
+    this.#wordleRenderer.renderGameState(this.#wordle.stats());
     this.#inputController.onSubmit((guessedWord) => {
       this.#consolidateGameStats(guessedWord);
     });
@@ -250,17 +274,19 @@ const initiateRenderer = () => {
     '#remaining-attempts'
   );
   const guessedInputContainer = document.querySelector('.guess-holder');
+  const gameStatsContainer = document.querySelector('.game-stats');
 
-  const renderer = new Renderer(
+  const wordleRenderer = new WordleRenderer(
     resultContainer,
     guessedWordsContainer,
     guessedInputContainer,
     chancesContainer,
     remainingAttemptsContainer,
-    correctWordHolder
+    correctWordHolder,
+    gameStatsContainer
   );
 
-  return renderer;
+  return wordleRenderer;
 };
 
 const initiateMouseController = () => {
@@ -273,14 +299,14 @@ const initiateMouseController = () => {
 };
 
 const initiateGame = () => {
-  const wordle = new Wordle('great', 3);
+  const wordle = new Wordle('great', 6);
   const inputController = initiateMouseController();
-  const renderer = initiateRenderer();
+  const wordleRenderer = initiateRenderer();
 
   const wordleController = new WordleController(
     wordle,
     inputController,
-    renderer
+    wordleRenderer
   );
 
   wordleController.start();
