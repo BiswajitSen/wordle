@@ -1,3 +1,36 @@
+class Frequency {
+  #keys;
+
+  constructor() {
+    this.#keys = {};
+  }
+
+  get frequencies() {
+    return this.#keys;
+  }
+
+  #isPresent(key) {
+    return key in this.#keys;
+  }
+
+  addOrInsert(key) {
+    if (!this.#isPresent(key)) {
+      this.#keys[key] = 0;
+    }
+
+    this.#keys[key] += 1;
+  }
+
+  removeKey(key) {
+    if (!this.#isPresent(key)) return;
+
+    this.#keys[key] -= 1;
+    if (this.#keys[key] === 0) {
+      delete this.#keys[key];
+    }
+  }
+}
+
 class Wordle {
   #secretWord;
   #guessesRecord;
@@ -38,27 +71,33 @@ class Wordle {
   }
 
   validateAndRecordGuess(guessedWord) {
-    const originalLetters = this.#secretWord.split('');
-    const guessedLetters = guessedWord.split('');
+    const originalLettersFrequencies = new Frequency();
+    [...this.#secretWord].forEach((letter) => {
+      originalLettersFrequencies.addOrInsert(letter);
+    });
 
-    return guessedLetters.map((letter, index) => {
-      const stat = {
+    const lettersStats = [];
+
+    [...guessedWord].forEach((letter, position) => {
+      const letterStats = {
         symbol: letter,
         isPresent: false,
         isInCorrectPosition: false,
       };
 
-      if (originalLetters.includes(letter)) {
-        stat.isPresent = true;
+      if (this.#secretWord.charAt(position) === letter) {
+        letterStats.isInCorrectPosition = true;
       }
 
-      const isInCorrectPosition = originalLetters[index] === letter;
-      if (isInCorrectPosition) {
-        stat.isInCorrectPosition = true;
+      if (letter in originalLettersFrequencies.frequencies) {
+        letterStats.isPresent = true;
       }
 
-      return stat;
+      originalLettersFrequencies.removeKey(letter);
+      lettersStats.push(letterStats);
     });
+
+    return lettersStats;
   }
 
   #updateScore() {
@@ -205,7 +244,6 @@ class WordleRenderer {
 
     guessesRecord.forEach((record) => {
       const wordHolder = document.createElement('li');
-      const correctGuesses = record.correctGuesses;
 
       const word = record.lettersStats.map(this.#addColorNotation);
       wordHolder.append(...word);
@@ -298,8 +336,36 @@ const initiateMouseController = () => {
   return inputController;
 };
 
+const fetchRandomWord = () => {
+  const words = [
+    'hello',
+    'there',
+    'great',
+    'hover',
+    'earth',
+    'biswa',
+    'glass',
+    'valid',
+    'break',
+    'utsab',
+    'guess',
+    'glare',
+    'delta',
+    'token',
+    'lexem',
+    'bloom',
+    'broom',
+    'groom',
+    'watch',
+    'books',
+  ];
+
+  const wordId = Math.floor(Math.random() * words.length);
+  return words[wordId];
+};
+
 const initiateGame = () => {
-  const wordle = new Wordle('great', 6);
+  const wordle = new Wordle('ab', 6);
   const inputController = initiateMouseController();
   const wordleRenderer = initiateRenderer();
 

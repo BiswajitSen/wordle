@@ -1,33 +1,36 @@
 <html>
+  <head>
+    <title>Wordle</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <script src="scripts/script.js"></script>
+  </head>
 
-<head>
-  <title>Wordle</title>
-  <link rel="stylesheet" href="styles/style.css" />
-  <script src="scripts/script.js"></script>
-</head>
+  <body>
+    <div id="root">
+      <main class="page flex">
+        <header class="game-tagline">Wordle: Guess The Word !!!</header>
 
-<body>
-  <div id="root">
-    <main class="page flex">
-      <header class="game-tagline">Wordle: Guess The Word !!!</header>
+        <section id="game-controls">
+          <input
+            type="text"
+            placeholder="Enter your guess"
+            class="guess-holder"
+            maxlength="5"
+            minlength="5" />
+          <button class="submit-guess-btn">Submit</button>
+        </section>
 
-      <section id="game-controls">
-        <input type="text" placeholder="Enter your guess" class="guess-holder" maxlength="5" />
-        <button class="submit-guess-btn">Submit</button>
-      </section>
+        <section class="players-attempts">
+          <div id="max-chances"></div>
+          <div id="remaining-attempts"></div>
+        </section>
 
-      <section class="players-attempts">
-        <div id="max-chances"></div>
-        <div id="remaining-attempts"></div>
-      </section>
-
-      <ol class="guesses"></ol>
-      <section class="flex game-stats">
-        <div class="result-container"></div>
-        <div class="correct-word"></div>
-      </section>
-    </main>
-  </div>
-</body>
-
+        <ol class="guesses"></ol>
+        <section class="flex game-stats">
+          <div class="result-container"></div>
+          <div class="correct-word"></div>
+        </section>
+      </main>
+    </div>
+  </body>
 </html>

@@ -8,8 +8,7 @@
 
 .page {
   flex-direction: column;
-  gap: 0.5em;
-  margin: 1vh 1vw;
+  margin-top: 1em;
 }
 
 .red {
@@ -48,12 +47,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5em;
+  gap: 1em;
 }
 
 .guessed-letter {
-  padding: 2vh;
-  margin: 0 0.5vw;
+  padding: 2em;
 }
 
 .game-tagline {
@@ -75,4 +73,9 @@
 
 .guess-holder {
   text-transform: uppercase;
+}
+
+input:invalid {
+  outline: 1px solid red;
+  border: none;
 }
