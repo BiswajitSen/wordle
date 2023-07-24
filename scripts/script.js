@@ -217,13 +217,6 @@ class WordleRenderer {
     });
   }
 
-  #addHeader(parent, heading) {
-    const header = document.createElement('header');
-    header.innerText = heading;
-    header.classList.add('guesses-header');
-    parent.appendChild(header);
-  }
-
   #addColorNotation(letter) {
     let color = 'red';
 
@@ -261,8 +254,6 @@ class WordleRenderer {
   renderGameState({ guessesRecord, chances, timesGuessed }) {
     this.#refreshGuessedWords();
     this.#renderAttemptsAndChances(chances, timesGuessed);
-
-    this.#addHeader(this.#guessedWordsContainer, 'Your Guesses:');
 
     guessesRecord.forEach((record) => {
       const wordHolder = document.createElement('li');
