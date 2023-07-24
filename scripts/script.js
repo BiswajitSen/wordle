@@ -70,14 +70,17 @@ class Wordle {
     return this.#timesGuessed >= this.#chances;
   }
 
-  validateAndRecordGuess(guessedWord) {
+  #frequenciesOfLettersInSecretWord() {
     const originalLettersFrequencies = new Frequency();
+
     [...this.#secretWord].forEach((letter) => {
       originalLettersFrequencies.addOrInsert(letter);
     });
 
-    const lettersStats = [];
+    return originalLettersFrequencies;
+  }
 
+  #updateIfLettersInPositions(lettersStats, originalLettersFrequencies, guessedWord) {
     [...guessedWord].forEach((letter, position) => {
       const letterStats = {
         symbol: letter,
@@ -86,16 +89,35 @@ class Wordle {
       };
 
       if (this.#secretWord.charAt(position) === letter) {
+        originalLettersFrequencies.removeKey(letter);
         letterStats.isInCorrectPosition = true;
-      }
-
-      if (letter in originalLettersFrequencies.frequencies) {
         letterStats.isPresent = true;
       }
 
-      originalLettersFrequencies.removeKey(letter);
       lettersStats.push(letterStats);
     });
+  }
+
+  #updateIfLettersPresent(lettersStats, originalLettersFrequencies, guessedWord) {
+    [...guessedWord].forEach((letter, id) => {
+      if (letter in originalLettersFrequencies.frequencies) {
+        lettersStats[id].isPresent = true;
+        originalLettersFrequencies.removeKey(letter);
+      }
+    });
+  }
+
+  validateAndRecordGuess(guessedWord) {
+    const lettersStats = [];
+    const originalLettersFrequencies = this.#frequenciesOfLettersInSecretWord();
+
+    this.#updateIfLettersInPositions(
+      lettersStats,
+      originalLettersFrequencies,
+      guessedWord
+    );
+
+    this.#updateIfLettersPresent(lettersStats, originalLettersFrequencies, guessedWord);
 
     return lettersStats;
   }
@@ -308,9 +330,7 @@ const initiateRenderer = () => {
   const guessedWordsContainer = document.querySelector('.guesses');
   const chancesContainer = document.querySelector('#max-chances');
   const correctWordHolder = document.querySelector('.correct-word');
-  const remainingAttemptsContainer = document.querySelector(
-    '#remaining-attempts'
-  );
+  const remainingAttemptsContainer = document.querySelector('#remaining-attempts');
   const guessedInputContainer = document.querySelector('.guess-holder');
   const gameStatsContainer = document.querySelector('.game-stats');
 
@@ -369,11 +389,7 @@ const initiateGame = () => {
   const inputController = initiateMouseController();
   const wordleRenderer = initiateRenderer();
 
-  const wordleController = new WordleController(
-    wordle,
-    inputController,
-    wordleRenderer
-  );
+  const wordleController = new WordleController(wordle, inputController, wordleRenderer);
 
   wordleController.start();
 };
