@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+.page {
+  flex-direction: column;
+  gap: 0.5em;
+  margin: 1vh 1vw;
+}
+
+.red {
+  background-color: rgb(225, 142, 142);
+}
+
+.yellow {
+  background-color: rgb(224, 224, 146);
+}
+
+.green {
+  background-color: rgb(144, 224, 144);
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+.guesses {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.guesses li {
+  display: flex;
+  gap: 0.5em;
+}
+
+.guesses span {
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.guessed-letter {
+  padding: 2vh;
+  margin: 0 0.5vw;
+}
+
+.game-tagline {
+  font-size: 1.5em;
+}
+
+.players-attempts {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.game-stats {
+  gap: 5vh;
+  margin-top: 5vh;
+  font-size: 1.5em;
+}
