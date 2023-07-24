@@ -6,6 +6,11 @@
   font-size: 16px;
 }
 
+#root {
+  margin: 0 auto;
+  width: 40vw;
+}
+
 .page {
   flex-direction: column;
   margin-top: 1em;
@@ -27,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5em;
+  gap: 2em;
 }
 
 .guesses {
@@ -59,10 +64,11 @@
 }
 
 .players-attempts {
-  display: flex;
-  align-items: flex-start;
   justify-content: space-around;
-  width: 100%;
+  width: 92%;
+  height: 2em;
+  border: 1px solid silver;
+  border-radius: 2px;
 }
 
 .game-stats {
@@ -72,10 +78,20 @@
 }
 
 .guess-holder {
+  height: 2em;
+  width: 20em;
   text-transform: uppercase;
 }
 
 input:invalid {
-  outline: 1px solid red;
-  border: none;
+  outline: 1px solid rgb(221, 159, 159);
+}
+
+input:valid {
+  outline: 1px solid rgb(125, 179, 125);
+}
+
+.submit-guess-btn {
+  height: 2em;
+  width: 8em;
 }

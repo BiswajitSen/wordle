@@ -253,9 +253,9 @@ class WordleRenderer {
   }
 
   #renderAttemptsAndChances(chances, timesGuessed) {
-    this.#chancesContainer.innerText = `chances: ${chances}`;
+    this.#chancesContainer.innerText = `Chances: ${chances}`;
     const remainingChances = chances - timesGuessed;
-    this.#remainingAttemptsContainer.innerText = `remaining: ${remainingChances}`;
+    this.#remainingAttemptsContainer.innerText = `Remaining: ${remainingChances}`;
   }
 
   renderGameState({ guessesRecord, chances, timesGuessed }) {
@@ -385,7 +385,7 @@ const fetchRandomWord = () => {
 };
 
 const initiateGame = () => {
-  const wordle = new Wordle('ab', 6);
+  const wordle = new Wordle(fetchRandomWord(), 6);
   const inputController = initiateMouseController();
   const wordleRenderer = initiateRenderer();
 
