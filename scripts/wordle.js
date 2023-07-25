@@ -47,7 +47,10 @@ class Wordle {
     return originalLettersFrequencies;
   }
 
-  #updateIfLettersInPositions(lettersStats, originalLettersFrequencies, guessedWord) {
+  validateAndRecordGuess(guessedWord) {
+    const lettersStats = [];
+    const originalLettersFrequencies = this.#frequenciesOfLettersInSecretWord();
+
     [...guessedWord].forEach((letter, position) => {
       const letterStats = {
         symbol: letter,
@@ -63,28 +66,13 @@ class Wordle {
 
       lettersStats.push(letterStats);
     });
-  }
 
-  #updateIfLettersPresent(lettersStats, originalLettersFrequencies, guessedWord) {
     [...guessedWord].forEach((letter, id) => {
       if (letter in originalLettersFrequencies.frequencies) {
         lettersStats[id].isPresent = true;
         originalLettersFrequencies.decreaseCount(letter);
       }
     });
-  }
-
-  validateAndRecordGuess(guessedWord) {
-    const lettersStats = [];
-    const originalLettersFrequencies = this.#frequenciesOfLettersInSecretWord();
-
-    this.#updateIfLettersInPositions(
-      lettersStats,
-      originalLettersFrequencies,
-      guessedWord
-    );
-
-    this.#updateIfLettersPresent(lettersStats, originalLettersFrequencies, guessedWord);
 
     return lettersStats;
   }
