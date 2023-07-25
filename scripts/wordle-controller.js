@@ -2,11 +2,13 @@ class WordleController {
   #wordle;
   #inputController;
   #wordleRenderer;
+  #gameStorage;
 
-  constructor(wordle, inputController, wordleRenderer) {
+  constructor({ wordle, inputController, wordleRenderer, gameStorage }) {
     this.#wordle = wordle;
     this.#inputController = inputController;
     this.#wordleRenderer = wordleRenderer;
+    this.#gameStorage = gameStorage;
   }
 
   #updateAndRenderGameState(guessedWord) {
@@ -20,10 +22,6 @@ class WordleController {
     return this.#wordle.secretWordLength() !== guessedWord.length;
   }
 
-  #storeGameSeasonData(secretWord, score) {
-    localStorage.setItem('seasonLog', JSON.stringify({ secretWord, score }));
-  }
-
   #consolidateGameStats(guessedWord) {
     if (this.#isInvalidEntry(guessedWord)) return;
     if (this.#wordle.isGameOver) return;
@@ -32,10 +30,12 @@ class WordleController {
 
     if (this.#wordle.hasGuessedCorrectly()) {
       this.#wordleRenderer.displayWinMessage();
-      const { score } = this.#wordle.stats();
 
+      const { score } = this.#wordle.stats();
       this.#wordleRenderer.renderScore(this.#wordle.stats(score));
-      this.#storeGameSeasonData(this.#wordle.secretWord, score);
+
+      this.#gameStorage.storeGameScore(score);
+      this.#gameStorage.storeSecretWord(this.#wordle.secretWord);
 
       return;
     }
@@ -47,22 +47,19 @@ class WordleController {
       this.#wordleRenderer.renderCorrectWord(this.#wordle.secretWord);
       this.#wordleRenderer.renderScore(score);
 
-      this.#storeGameSeasonData(this.#wordle.secretWord, score);
+      this.#gameStorage.storeGameScore(score);
+      this.#gameStorage.storeSecretWord(this.#wordle.secretWord);
     }
   }
 
-  #fetchPreviousSeasonData() {
-    return (
-      JSON.parse(localStorage.getItem('seasonLog')) || {
-        score: 0,
-        secretWord: "haven't play yet",
-      }
-    );
-  }
-
   start() {
-    const previousSeasonLog = this.#fetchPreviousSeasonData();
-    this.#wordleRenderer.renderPreviousSeasonLog(previousSeasonLog);
+    const lastGameScore = this.#gameStorage.lastGameScore();
+    const lastSecretWord = this.#gameStorage.lastSecretWord();
+
+    if (lastSecretWord) {
+      this.#wordleRenderer.renderLastSeasonResult({ lastGameScore, lastSecretWord });
+    }
+
     this.#wordleRenderer.renderGameState(this.#wordle.stats());
     this.#inputController.onSubmit((guessedWord) => {
       this.#consolidateGameStats(guessedWord);

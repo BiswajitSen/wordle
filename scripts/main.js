@@ -60,11 +60,17 @@ const fetchRandomWord = () => {
 };
 
 const initiateGame = () => {
-  const wordle = new Wordle('there', 6);
+  const wordle = new Wordle(fetchRandomWord(), 6);
   const inputController = initiateMouseController();
   const wordleRenderer = initiateRenderer();
+  const gameStorage = new GameStorage(localStorage);
 
-  const wordleController = new WordleController(wordle, inputController, wordleRenderer);
+  const wordleController = new WordleController({
+    wordle,
+    inputController,
+    wordleRenderer,
+    gameStorage,
+  });
 
   wordleController.start();
 };

@@ -82,12 +82,12 @@ class WordleRenderer {
     this.#remainingAttemptsContainer.innerText = `Remaining: ${remainingChances}`;
   }
 
-  renderPreviousSeasonLog(previousSeasonLog) {
+  renderLastSeasonResult({ lastGameScore, lastSecretWord }) {
     const scoreHolder = document.createElement('div');
     const secretWordHolder = document.createElement('div');
 
-    scoreHolder.innerText = previousSeasonLog.score;
-    secretWordHolder.innerText = previousSeasonLog.secretWord;
+    scoreHolder.innerText = `Last Score: ${lastGameScore}`;
+    secretWordHolder.innerText = `Secret Word: ${lastSecretWord}`;
 
     this.#previousLogContainer.appendChild(scoreHolder);
     this.#previousLogContainer.appendChild(secretWordHolder);
