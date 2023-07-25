@@ -6,16 +6,18 @@ const initiateRenderer = () => {
   const remainingAttemptsContainer = document.querySelector('#remaining-attempts');
   const guessedInputContainer = document.querySelector('.guess-holder');
   const gameStatsContainer = document.querySelector('.game-stats');
+  const previousLogContainer = document.querySelector('.about-previous-season');
 
-  const wordleRenderer = new WordleRenderer(
+  const wordleRenderer = new WordleRenderer({
     resultContainer,
     guessedWordsContainer,
     guessedInputContainer,
     chancesContainer,
     remainingAttemptsContainer,
     correctWordHolder,
-    gameStatsContainer
-  );
+    gameStatsContainer,
+    previousLogContainer,
+  });
 
   return wordleRenderer;
 };
@@ -58,7 +60,7 @@ const fetchRandomWord = () => {
 };
 
 const initiateGame = () => {
-  const wordle = new Wordle(fetchRandomWord(), 6);
+  const wordle = new Wordle('there', 6);
   const inputController = initiateMouseController();
   const wordleRenderer = initiateRenderer();
 

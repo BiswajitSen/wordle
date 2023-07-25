@@ -15,6 +15,14 @@
       <main class="page flex">
         <header class="game-tagline">Wordle: Guess The Word !!!</header>
 
+        <section class="about-previous-season flex">
+        </section>
+
+        <section class="players-attempts flex">
+          <div id="max-chances"></div>
+          <div id="remaining-attempts"></div>
+        </section>
+
         <section id="game-controls">
           <input
             type="text"
@@ -23,11 +31,6 @@
             maxlength="5"
             minlength="5" />
           <button class="submit-guess-btn">Submit</button>
-        </section>
-
-        <section class="players-attempts flex">
-          <div id="max-chances"></div>
-          <div id="remaining-attempts"></div>
         </section>
 
         <ol class="guesses"></ol>

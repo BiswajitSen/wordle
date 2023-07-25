@@ -59,6 +59,7 @@ class Wordle {
       };
 
       if (this.#secretWord.charAt(position) === letter) {
+        console.log(letter, 'is present');
         originalLettersFrequencies.decreaseCount(letter);
         letterStats.isInCorrectPosition = true;
         letterStats.isPresent = true;
@@ -66,6 +67,8 @@ class Wordle {
 
       lettersStats.push(letterStats);
     };
+
+    console.log(originalLettersFrequencies.frequencies);
 
     const updatePresentLetters = (letter, id) => {
       if (letter in originalLettersFrequencies.frequencies) {

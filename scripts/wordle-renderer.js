@@ -6,16 +6,18 @@ class WordleRenderer {
   #remainingAttemptsContainer;
   #correctWordHolder;
   #gameStatsContainer;
+  #previousLogContainer;
 
-  constructor(
+  constructor({
     resultContainer,
     guessedWordsContainer,
     guessedInputContainer,
     chancesContainer,
     remainingAttemptsContainer,
     correctWordHolder,
-    gameStatsContainer
-  ) {
+    gameStatsContainer,
+    previousLogContainer,
+  }) {
     this.#resultContainer = resultContainer;
     this.#guessedWordsContainer = guessedWordsContainer;
     this.#guessedInputContainer = guessedInputContainer;
@@ -23,6 +25,7 @@ class WordleRenderer {
     this.#remainingAttemptsContainer = remainingAttemptsContainer;
     this.#correctWordHolder = correctWordHolder;
     this.#gameStatsContainer = gameStatsContainer;
+    this.#previousLogContainer = previousLogContainer;
   }
 
   displayLostMessage() {
@@ -77,6 +80,17 @@ class WordleRenderer {
     this.#chancesContainer.innerText = `Chances: ${chances}`;
     const remainingChances = chances - attempts;
     this.#remainingAttemptsContainer.innerText = `Remaining: ${remainingChances}`;
+  }
+
+  renderPreviousSeasonLog(previousSeasonLog) {
+    const scoreHolder = document.createElement('div');
+    const secretWordHolder = document.createElement('div');
+
+    scoreHolder.innerText = previousSeasonLog.score;
+    secretWordHolder.innerText = previousSeasonLog.secretWord;
+
+    this.#previousLogContainer.appendChild(scoreHolder);
+    this.#previousLogContainer.appendChild(secretWordHolder);
   }
 
   renderGameState({ guessesRecord, chances, attempts }) {
