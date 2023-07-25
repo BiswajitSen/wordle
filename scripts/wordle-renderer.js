@@ -73,15 +73,15 @@ class WordleRenderer {
     this.#gameStatsContainer.appendChild(scoreContainer);
   }
 
-  #renderAttemptsAndChances(chances, timesGuessed) {
+  #renderAttemptsAndChances(chances, attempts) {
     this.#chancesContainer.innerText = `Chances: ${chances}`;
-    const remainingChances = chances - timesGuessed;
+    const remainingChances = chances - attempts;
     this.#remainingAttemptsContainer.innerText = `Remaining: ${remainingChances}`;
   }
 
-  renderGameState({ guessesRecord, chances, timesGuessed }) {
+  renderGameState({ guessesRecord, chances, attempts }) {
     this.#refreshGuessedWords();
-    this.#renderAttemptsAndChances(chances, timesGuessed);
+    this.#renderAttemptsAndChances(chances, attempts);
 
     guessesRecord.forEach((record) => {
       const wordHolder = document.createElement('li');
